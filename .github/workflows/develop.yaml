@@ -26,6 +26,7 @@ jobs:
         path: playwright-report/
         retention-days: 30
   build:
+      needs: test
       runs-on: ubuntu-latest
       steps:
       - name: Checkout repository
