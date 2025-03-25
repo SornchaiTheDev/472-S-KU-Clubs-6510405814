@@ -74,14 +74,34 @@ test.describe("Club Page", () => {
   test("should maintain loading state on navigation and return", async ({
     page,
   }) => {
-    // // Navigate to another page
-    // await page.goto("/club/1/activities");
+    // Wait for initial content to load
+    await expect(page.getByText("ชมรมดนตรีสากล")).toBeVisible();
 
+    // Mock a slow response for the next navigation
+    await page.route("/api/clubs*", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const clubs = await getClubs();
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(clubs),
+      });
+    });
+
+    // Navigate to another page
+    await page.goto("/club/1/activities");
+    
     // Return to home page
     await page.goto("/");
-    await page.reload();
 
-    await expect(page.getByText("KU Clubs")).not.toBeVisible();
+    // Verify loading state is shown by checking if any skeleton is visible
+    const skeletons = page.getByTestId("skeleton");
+    await expect(skeletons).toHaveCount(36); // Verify we have the expected number of skeletons
+    await expect(skeletons.first()).toBeVisible();
+
+    // Wait for content to load
+    await expect(skeletons).toHaveCount(0);
+    await expect(page.getByText("ชมรมดนตรีสากล")).toBeVisible();
   });
 
   // Story 2-1 Display All Clubs in KU

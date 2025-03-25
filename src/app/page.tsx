@@ -128,22 +128,32 @@ export default function Home() {
           </Loading>
         </div>
         <div className="flex justify-between mt-4">
-          <button
-            className="flex text-sm justify-center items-center gap-2 disabled:text-gray-400"
-            disabled={durringPage === 1}
-            onClick={() => setDurringPage((durringPage - 1) % pageCount)}
+          <Loading
+            isLoading={isLoading}
+            fallback={<Skeleton className="w-[90px] h-[24px]" />}
           >
-            <ArrowLeft />
-            <p>Previous</p>
-          </button>
-          <button
-            className="flex text-sm justify-center items-center gap-2 disabled:text-gray-400"
-            disabled={durringPage === pageCount}
-            onClick={() => setDurringPage(durringPage + 1)}
+            <button
+              className="flex text-sm justify-center items-center gap-2 disabled:text-gray-400"
+              disabled={durringPage === 1}
+              onClick={() => setDurringPage((durringPage - 1) % pageCount)}
+            >
+              <ArrowLeft />
+              <p>Previous</p>
+            </button>
+          </Loading>
+          <Loading
+            isLoading={isLoading}
+            fallback={<Skeleton className="w-[90px] h-[24px]" />}
           >
-            <p>Next</p>
-            <ArrowRight />
-          </button>
+            <button
+              className="flex text-sm justify-center items-center gap-2 disabled:text-gray-400"
+              disabled={durringPage === pageCount}
+              onClick={() => setDurringPage(durringPage + 1)}
+            >
+              <p>Next</p>
+              <ArrowRight />
+            </button>
+          </Loading>
         </div>
       </div>
     </div>
