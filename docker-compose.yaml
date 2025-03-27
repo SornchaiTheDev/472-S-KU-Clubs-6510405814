@@ -1,0 +1,7 @@
+version: 3
+
+services:
+  web:
+    image: sornchaithedev/ku-clubs@sha-099eb17
+    ports:
+      - "3000:3000"
