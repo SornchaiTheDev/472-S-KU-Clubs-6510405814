@@ -1,22 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto, Prompt } from "next/font/google";
+import { Prompt } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"], // Specify font weights you need
-  variable: "--font-roboto", // Optional: CSS variable for easy use
-});
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "KU Clubs",
@@ -36,9 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${prompt.variable} font-sans`}
-      >
+      <body className={`${prompt.variable} font-sans`}>
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>
