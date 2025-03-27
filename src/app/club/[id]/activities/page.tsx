@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ActivitySkeleton } from '@/components/skeleton/activity-skeleton';
 import Image from 'next/image';
@@ -11,7 +11,6 @@ import ClubInterface from '@/interfaces/Club';
 import { useParams } from 'next/navigation';
 import { ArrowLeft, RefreshCcw } from 'lucide-react';
 import Link from 'next/link';
-import parseThaiDate from '@/utils/ThaiDate';
 
 export default function ClubDetailPage() {
   const { id } = useParams() as { id: string };
@@ -28,9 +27,8 @@ export default function ClubDetailPage() {
     fetch(`/api/club/${id}`)
       .then(res => res.json())
       .then(data => {
-        console.log("Club data received:", data);
         setClubData(data);
-        setLoadingClub(false); // ย้ายมาที่นี่เพื่อให้แน่ใจว่า loading state ถูกอัปเดตหลังจากได้รับข้อมูล
+        setLoadingClub(false);
       })
       .catch(error => {
         console.error("Error fetching club data:", error);
@@ -38,17 +36,11 @@ export default function ClubDetailPage() {
       });
   }
 
-  function getActivityById(){
-    console.log("Fetching activities for club ID:", id);
+  function getActivityById() {
     fetch(`/api/club/${id}/activities`)
-      .then(res => {
-        console.log("Response status:", res.status);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        console.log("Activities data received:", data);
         if (Array.isArray(data)) {
-          // ใช้ข้อมูลที่ API ส่งมาโดยตรง ไม่ต้องสร้างข้อมูลเพิ่มเติม
           setActivities(data);
         } else {
           console.error("Received non-array data:", data);
@@ -66,56 +58,108 @@ export default function ClubDetailPage() {
   useEffect(() => {
     getClubById();
     getActivityById();
-    
-    // เพิ่ม timeout เพื่อให้แน่ใจว่า loading state จะถูกรีเซ็ตหลังจากเวลาที่กำหนด
-    const timeout = setTimeout(() => {
-      if (loadingActivities) {
-        setLoadingActivities(false);
-      }
-      if (loadingClub) {
-        setLoadingClub(false);
-      }
-    }, 5000); // 5 วินาที
-    
-    return () => clearTimeout(timeout);
-  }, [id]); // เพิ่ม id เป็น dependency
+  }, [id]);
 
   // Filter and sort activities
   useEffect(() => {
     if (!loadingActivities) {
-      console.log("Current activities:", activities);
-      
       let result = [...activities];
 
       // Filter activities by search term
       if (searchTerm) {
-        result = result.filter(activity => {
-          console.log("Filtering activity:", activity);
-          return (
-            // ใช้ฟิลด์ที่เพิ่มเข้ามาใหม่
-            (activity.title?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (activity.description?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (activity.location?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (activity.date?.toLowerCase().includes(searchTerm.toLowerCase()))
-          );
-        });
+        result = result.filter(activity =>
+          (activity.activityName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (activity.aboutActivity?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (activity.location?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (activity.date?.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
       }
 
-      // Order activities by sort option
+      // Define a type for the Thai months mapping
+      const thaiMonths: Record<string, number> = {
+        "ม.ค.": 0, "ก.พ.": 1, "มี.ค.": 2, "เม.ย.": 3, "พ.ค.": 4, "มิ.ย.": 5,
+        "ก.ค.": 6, "ส.ค.": 7, "ก.ย.": 8, "ต.ค.": 9, "พ.ย.": 10, "ธ.ค.": 11
+      };
+
+      // Define an interface for the activity object
+      interface ActivityData {
+        id: string;
+        activityName: string;
+        date: string;
+        time: string;
+        location: string;
+        aboutActivity: string;
+        status: string;
+        clubId: string;
+        // Add other properties as needed
+      }
+
+      function parseDateTime(activity: ActivityData) {
+        try {
+          if (!activity.date || !activity.time) return null;
+          
+          // Split the date string and handle different formats
+          const dateParts = activity.date.split(" ");
+          if (dateParts.length < 3) {
+            return null;
+          }
+          
+          const day = parseInt(dateParts[0]);
+          const monthThai = dateParts[1];
+          const yearThai = dateParts[2];
+          
+          // Check if the month is valid
+          if (!thaiMonths.hasOwnProperty(monthThai)) {
+            return null;
+          }
+          
+          // Parse time (handle different formats)
+          let hour = 0, minute = 0;
+          if (activity.time) {
+            const timeParts = activity.time.includes("-") 
+              ? activity.time.split("-")[0].trim() 
+              : activity.time.trim();
+              
+            if (timeParts.includes(".")) {
+              [hour, minute] = timeParts.split(".").map(part => parseInt(part));
+            } else if (timeParts.includes(":")) {
+              [hour, minute] = timeParts.split(":").map(part => parseInt(part));
+            }
+          }
+
+          const year = parseInt(yearThai) - 543; // แปลง พ.ศ. -> ค.ศ.
+          const month = thaiMonths[monthThai]; // แปลงเดือนเป็นตัวเลข
+          
+          const date = new Date(year, month, day, hour, minute);
+          return date;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      // Sort activities by sort option
       switch (sortOption) {
-        case 'newest':
-          result.sort((a, b) => parseThaiDate(b.date).getTime() - parseThaiDate(a.date).getTime());
+        case 'latestToOldest':
+          result.sort((a, b) => {
+            const dateA = parseDateTime(a);
+            const dateB = parseDateTime(b);
+            if (!dateA || !dateB) return 0;
+            return dateB.getTime() - dateA.getTime();
+          });
           break;
-        case 'oldest':
-          result.sort((a, b) => parseThaiDate(a.date).getTime() - parseThaiDate(b.date).getTime());
+        case 'oldestToLatest':
+          result.sort((a, b) => {
+            const dateA = parseDateTime(a);
+            const dateB = parseDateTime(b);
+            if (!dateA || !dateB) return 0;
+            return dateA.getTime() - dateB.getTime();
+          });
           break;
         case 'alphabetical':
-          // ใช้ title ที่เพิ่มเข้ามาใหม่
-          result.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+          result.sort((a, b) => (a.activityName || '').localeCompare(b.activityName || ''));
           break;
         case 'reverseAlphabetical':
-          // ใช้ title ที่เพิ่มเข้ามาใหม่
-          result.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
+          result.sort((a, b) => (b.activityName || '').localeCompare(a.activityName || ''));
           break;
       }
 
@@ -206,10 +250,10 @@ export default function ClubDetailPage() {
                   <SelectValue placeholder="เรียงลำดับตาม" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="newest">ล่าสุด</SelectItem>
-                  <SelectItem value="oldest">เก่าสุด</SelectItem>
-                  <SelectItem value="alphabetical">ตามตัวอักษร A-Z</SelectItem>
-                  <SelectItem value="reverseAlphabetical">ตามตัวอักษร Z-A</SelectItem>
+                  <SelectItem value="latestToOldest">กิจกรรมล่าสุดไปเก่าสุด</SelectItem>
+                  <SelectItem value="oldestToLatest">กิจกรรมเก่าสุดไปล่าสุด</SelectItem>
+                  <SelectItem value="alphabetical">เรียงตาม A-z/ก-ฮ</SelectItem>
+                  <SelectItem value="reverseAlphabetical">เรียงตาม z-a ,ฮ-ก</SelectItem>
                 </SelectContent>
               </Select>
             </div>

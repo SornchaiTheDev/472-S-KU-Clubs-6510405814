@@ -21,6 +21,59 @@
           "fitnessActivity": 0,
           "socialActivity": 0
         }
+      },
+      {"id": "101-1",
+        "date": "10 มี.ค. 2568",
+        "location": "ห้องประชุมกลาง",
+        "time": "15.00-17.00",
+        "activityName": "แสดงสดดนตรีงานรวมศิษย์เก่า",
+        "aboutActivity": "แสดงวงดนตรีมหาลัยให้แก่ศิษย์เก่า KU รุ่น 50",
+        "status" : "past",
+        "maxParticipants" : 20,
+        "requirements" : "ใส่ชุดนิสิตหรือสีสุภาพ ขาวดำ",
+        "activityHours": {
+          "universityActivity": 1,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
+      },
+      {"id": "101-2",
+        "date": "31 มี.ค. 2568",
+        "location": "อาคาร A ชั้น 4 คณะมนุษย์ศาสตร์",
+        "time": "10.00-13.00",
+        "activityName": "ประกวดวงดนตรี Folksong",
+        "aboutActivity": "แข่งเล่นวงดนตรี 3 คนขึ้นไปแนวเพลง thai pop",
+        "requirements" : "นำเครื่องดนตรีมาแสดงเอง",
+        "activityHours": {
+          "universityActivity": 0,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
+      },
+      {"id": "101-3",
+        "date": "12 เม.ย. 2568",
+        "location": "คาเฟ่ True lab ม.เกษตร บางเขน",
+        "time": "11.00-14.00",
+        "activityName": "สอนน้องเล่นดนตรี",
+        "aboutActivity": "อาสาสมัครสอนน้องประถมฝึกเล่นดนตรีแบบง่ายๆ",
+        "activityHours": {
+          "universityActivity": 0,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
+      },
+      {"id": "101-4",
+        "date": "28 มี.ค. 2568",
+        "location": "คาเฟ่ True lab ม.เกษตร บางเขน",
+        "time": "11.00-14.00",
+        "activityName": "Workshop รู้จักเครื่องดนตรี & พื้นฐานการเล่น",
+        "aboutActivity": "แนะนำเครื่องดนตรีสากลเบื้องต้น เช่น กีตาร์ คีย์บอร์ด กลองไฟฟ้า สอนพื้นฐานการอ่านโน้ตดนตรีและจังหวะ",
+        "status":"ongoing",
+        "activityHours": {
+          "universityActivity": 2,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
       }
     ],
     "committee": [
@@ -54,6 +107,19 @@
         "aboutActivity": "ฝึกซ้อมแบดมินตันเพื่อพัฒนาทักษะและเตรียมตัวสำหรับการแข่งขัน",
         "activityHours": {
           "universityActivity": 1,
+          "fitnessActivity": 2,
+          "socialActivity": 0
+        }
+      },
+      {"id": "102-1",
+        "date": "24 ก.พ. 2568",
+        "location": "สนามกีฬาประจำมหาวิทยาลัย",
+        "time": "8.00-16.00",
+        "activityName": "เล่นกีฬาตรวจสุขภาพประจำปี",
+        "aboutActivity": "ตรวจสมรรถภาพทางกายของนิสิตที่ลงเรียนวิชาพละศึกษา",
+        "status" : "past",
+        "activityHours": {
+          "universityActivity": 0,
           "fitnessActivity": 2,
           "socialActivity": 0
         }
@@ -92,6 +158,19 @@
           "universityActivity": 2,
           "fitnessActivity": 0,
           "socialActivity": 1
+        }
+      },
+      {"id": "103-1",
+        "date": "15 ก.พ. 2568",
+        "location": "คณะวิศวกรรมศาสตร์",
+        "time": "9.00-12.00",
+        "activityName": "ถ่ายภาพงานสัมนาคณะวิศวะ",
+        "aboutActivity": "ช่วยถ่ายภาพภายในงานสัมนาเพื่อลงข่าว",
+        "status" : "past",
+        "activityHours": {
+          "universityActivity": 0,
+          "fitnessActivity": 0,
+          "socialActivity": 2
         }
       }
     ],
@@ -273,6 +352,19 @@
           "fitnessActivity": 0,
           "socialActivity": 2
         }
+      },
+      {"id": "108-1",
+        "date": "5 มี.ค. 2568",
+        "location": "อุทยานรักษาพันธุ์สัตว์น้ำ",
+        "time": "08.00-12.00",
+        "activityName": "ดูแลน้องเต่า",
+        "aboutActivity": "ทำความสะอาดบ่อเลี้ยงเต่า และปล่อยเต่ากลับทะเล",
+        "status" :"past",
+        "activityHours": {
+          "universityActivity": 2,
+          "fitnessActivity": 0,
+          "socialActivity": 2
+        }
       }
     ],
     "committee": [
@@ -304,6 +396,7 @@
         "time": "17.00-20.00",
         "activityName": "ฝึกซ้อมการแสดงละคร",
         "aboutActivity": "ฝึกซ้อมและพัฒนาทักษะการแสดงละคร",
+        "status": "ongoing",
         "activityHours": {
           "universityActivity": 2,
           "fitnessActivity": 0,
@@ -345,6 +438,19 @@
           "fitnessActivity": 0,
           "socialActivity": 0
         }
+      },{
+        "id": "110-1",
+        "date": "10 ม.ค. 2568",
+        "location": "อาคาร A ชั้น 4 คณะมนุษย์ศาสตร์",
+        "time": "12.00-15.00",
+        "activityName": "ประกวดส่งนิยายเรื่องยาว",
+        "aboutActivity": "สามารถส่งผลงานเขียนเรื่องยาวประเภทไหนก็ได้ ที่คณะมนุษย์ ชิงเงินรางวัล 50,000",
+        "status" :"past",
+        "activityHours": {
+          "universityActivity": 0,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
       }
     ],
     "committee": [
@@ -378,6 +484,19 @@
         "aboutActivity": "เรียนรู้การพัฒนาโปรแกรมเบื้องต้นโดยใช้ภาษา Python",
         "activityHours": {
           "universityActivity": 2,
+          "fitnessActivity": 0,
+          "socialActivity": 0
+        }
+      },{
+        "id": "111-1",
+        "date": "20 ม.ค. 2568",
+        "location": "สำนักคอม ห้อง A4",
+        "time": "16.00-18.00",
+        "activityName": "Career Tech Talk",
+        "aboutActivity": "พูดคุยสอบถามเรื่องอาชีพสาย Tech และสอนทำ LinkedIn",
+        "status" :"past",
+        "activityHours": {
+          "universityActivity": 1,
           "fitnessActivity": 0,
           "socialActivity": 0
         }

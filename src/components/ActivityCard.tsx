@@ -10,7 +10,6 @@ interface ActivityCardProps {
 
 // Update the function signature to include clubId
 export default function ActivityCard({ activity, clubId }: ActivityCardProps) {
-  // Removed console.log statement
   
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-all duration-300">

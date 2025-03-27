@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface ActivityDetail {
   id: string;
@@ -37,6 +38,7 @@ export default function ActivityDetailPage() {
   const [activity, setActivity] = useState<ActivityDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!activityId || !clubId) return;
@@ -53,8 +55,12 @@ export default function ActivityDetailPage() {
         
         const data = await response.json();
         setActivity(data);
+        
+        // Set the first image as selected if available
+        if (data.images && data.images.length > 0) {
+          setSelectedImage(data.images[0]);
+        }
       } catch (err) {
-        console.error('เกิดข้อผิดพลาด:', err);
         setError('ไม่สามารถโหลดข้อมูลกิจกรรมได้ กรุณาลองใหม่อีกครั้ง');
       } finally {
         setLoading(false);
@@ -97,11 +103,59 @@ export default function ActivityDetailPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+        {activity.status === 'past' && activity.images && activity.images.length > 0 && (
+          <div className="mb-6">
+            <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden mb-4">
+              <Image
+                src={selectedImage || activity.images[0]}
+                alt={activity.activityName}
+                fill
+                className="object-cover"
+                onError={(e) => {
+                  // @ts-ignore
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/images/default-activity.jpg";
+                }}
+              />
+            </div>
+            
+            {/* แสดงแกลเลอรี่ย่อยเมื่อมีรูปมากกว่า 1 รูป */}
+            {activity.images.length > 1 && (
+              <div className="grid grid-cols-5 gap-2">
+                {activity.images.slice(0, 5).map((img, index) => (
+                  <div
+                    key={index}
+                    className={`relative aspect-square rounded-md overflow-hidden cursor-pointer border-2 ${selectedImage === img ? 'border-green-500' : 'border-transparent'}`}
+                    onClick={() => setSelectedImage(img)}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${activity.activityName} - รูปที่ ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      onError={(e) => {
+                        // @ts-ignore
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/images/default-activity.jpg";
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="flex justify-between items-start mb-6 flex-wrap">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">{activity.activityName}</h1>
-          <div className="px-4 py-2 rounded-full bg-green-100 text-green-800 font-medium">
-            {activity.status === 'upcoming' ? 'กำลังจะมาถึง' : 
-             activity.status === 'ongoing' ? 'กำลังดำเนินการ' : 'ผ่านไปแล้ว'}
+          <div className={`px-4 py-2 rounded-full font-medium ${activity.status === 'past'
+              ? 'bg-gray-100 text-gray-600'
+              : activity.status === 'ongoing'
+                ? 'bg-yellow-100 text-yellow-800'
+                : 'bg-green-100 text-green-800'
+            }`}>
+            {activity.status === 'upcoming' ? 'กำลังจะมาถึง' :
+              activity.status === 'ongoing' ? 'กำลังดำเนินการ' : 'ผ่านไปแล้ว'}
           </div>
         </div>
 
@@ -122,6 +176,7 @@ export default function ActivityDetailPage() {
                 </div>
               </div>
               
+              {/* ส่วนอื่นๆ ยังคงเหมือนเดิม */}
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,34 +216,45 @@ export default function ActivityDetailPage() {
             </div>
           </div>
           
-          <div className="border-b pb-4">
-            <h2 className="text-lg font-semibold mb-4 text-green-800">ข้อมูลการสมัคร</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+          {/* แสดงส่วนข้อมูลการสมัครเฉพาะกิจกรรมที่ยังไม่ผ่านไป */}
+          {activity.status !== 'past' && (
+            <div className="border-b pb-4">
+              <h2 className="text-lg font-semibold mb-4 text-green-800">ข้อมูลการสมัคร</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">จำนวนผู้เข้าร่วม</p>
+                    <p className="text-gray-600">รับสมัครสูงสุด {activity.maxParticipants} คน</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">จำนวนผู้เข้าร่วม</p>
-                  <p className="text-gray-600">รับสมัครสูงสุด {activity.maxParticipants} คน</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-medium">สมัครภายใน</p>
-                  <p className="text-gray-600">{activity.deadline}</p>
+                
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-medium">สมัครภายใน</p>
+                    <p className="text-gray-600">{activity.deadline}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+          
+          {/* แสดงสรุปกิจกรรมสำหรับกิจกรรมที่ผ่านไปแล้ว */}
+          {activity.status === 'past' && activity.summary && (
+            <div className="border-b pb-4">
+              <h2 className="text-lg font-semibold mb-4 text-green-800">สรุปกิจกรรม</h2>
+              <p className="text-gray-700 whitespace-pre-line">{activity.summary}</p>
+            </div>
+          )}
           
           <div className="border-b pb-4">
             <h2 className="text-lg font-semibold mb-4 text-green-800">รายละเอียดเพิ่มเติม</h2>
@@ -223,16 +289,31 @@ export default function ActivityDetailPage() {
           )}
         </div>
         
-        {/* ปุ่มสมัครเข้าร่วมกิจกรรม (สำหรับกิจกรรมที่กำลังจะมาถึงหรือกำลังดำเนินการ) */}
-        {(activity.status === 'upcoming' || activity.status === 'ongoing') && (
+        {/* ปุ่มสมัครเข้าร่วมกิจกรรม (สำหรับกิจกรรมที่กำลังจะมาถึงเท่านั้น) */}
+        {activity.status === 'upcoming' && (
           <div className="mt-8 flex justify-center">
-            <Button 
+            <Button
               className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg text-lg w-full sm:w-auto"
               asChild
             >
               <a href="https://forms.gle/D9nXwDneC4rBxBNq8" target="_blank" rel="noopener noreferrer">
                 สมัครเข้าร่วมกิจกรรม
               </a>
+            </Button>
+          </div>
+        )}
+        
+        {/* ปุ่มดูรูปภาพทั้งหมด (สำหรับกิจกรรมที่ผ่านไปแล้วและมีรูปมากกว่า 5 รูป) */}
+        {activity.status === 'past' && activity.images && activity.images.length > 5 && (
+          <div className="mt-8 flex justify-center">
+            <Button
+              variant="outline"
+              className="text-green-700 border-green-700 hover:bg-green-50"
+              asChild
+            >
+              <Link href={`/club/${clubId}/activities/${activityId}/gallery`}>
+                ดูรูปภาพทั้งหมด ({activity.images.length} รูป)
+              </Link>
             </Button>
           </div>
         )}

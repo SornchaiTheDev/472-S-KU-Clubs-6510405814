@@ -137,11 +137,6 @@ test.describe("Club Page", () => {
     // Instead of checking for specific sections, just verify that some content exists
     // This is more resilient to page structure changes
     await expect(page.locator("body")).not.toBeEmpty();
-
-    // Take a screenshot to debug the actual page structure
-    await page.screenshot({
-      path: "c:\\Users\\User\\Documents\\test_club\\club-detail.png",
-    });
   });
 
   // Story 2-3 Pagination
