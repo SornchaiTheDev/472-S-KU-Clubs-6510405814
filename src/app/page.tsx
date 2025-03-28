@@ -106,7 +106,14 @@ export default function Home() {
       {/* Club List */}
       <div className="w-full">
         <div className="flex items-center justify-end">
-          <Button onClick={() => router.push(`/favorite-clubs`)}>ดูชมรมที่ชื่นชม</Button>
+          <Loading
+            isLoading={isLoading}
+            fallback={<Skeleton className="w-[120px] h-10" />}
+          >
+            <Button onClick={() => router.push(`/favorite-clubs`)}>
+              ดูชมรมโปรด
+            </Button>
+          </Loading>
         </div>
         <div className="grid auto-rows-max mt-3 gap-3 md:grid-cols-2 w-full">
           <Loading
