@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import ClubBoxSkeleton from "@/components/ClubBoxSkeleton";
 import Image from "next/image";
 import ClubInterface from "@/interfaces/Club";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [clubs, setClubs] = useState<ClubInterface[]>([]);
@@ -18,6 +20,8 @@ export default function Home() {
   const [filteredClubs, setFilteredClubs] = useState(clubs);
   const [durringPage, setDurringPage] = useState(1);
   const pageCount = Math.ceil(clubs.length / 6);
+
+  const router = useRouter();
 
   // Fetch club data from API
   useEffect(() => {
@@ -101,6 +105,9 @@ export default function Home() {
       </div>
       {/* Club List */}
       <div className="w-full">
+        <div className="flex items-center justify-end">
+          <Button onClick={() => router.push(`/favorite-clubs`)}>ดูชมรมที่ชื่นชม</Button>
+        </div>
         <div className="grid auto-rows-max mt-3 gap-3 md:grid-cols-2 w-full">
           <Loading
             isLoading={isLoading}
