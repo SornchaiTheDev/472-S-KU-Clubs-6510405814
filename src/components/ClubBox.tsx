@@ -33,7 +33,6 @@ export default function ClubBox({id, clubType, campus, clubName, handler }: Prop
     if (!isFav === false) {
       localStorage.removeItem(STORAGE_KEY);
     }
-    // window.location.reload();
 
     if (handler) {
       handler();
